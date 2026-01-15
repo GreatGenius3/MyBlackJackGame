@@ -5,7 +5,7 @@ import java.awt.*;
  * Våran CardPrinter
  * Som ritar ut korten
  */
-public class CardPrinter extends JPanel
+public class CardPanel extends JPanel
 {
     JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
     JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -21,7 +21,7 @@ public class CardPrinter extends JPanel
      *
      * @param c är det kort vi vill skapa fram
      */
-    public CardPrinter(Card c)
+    public CardPanel(Card c)
     {
         if (c.getCardSuit().equals(Suit.HEARTS) || c.getCardSuit().equals(Suit.DIAMONDS))
         {

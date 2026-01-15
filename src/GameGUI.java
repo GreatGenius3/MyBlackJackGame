@@ -18,10 +18,7 @@ public class GameGUI extends JFrame
     private JPanel dealerCardsPanel;
     private JPanel playerCardsPanel;
 
-    Deck cardDeck;
-    private List<Card> dealerHand;
-    private List<Card> playerHand;
-    private boolean gameOver;
+    GameController gameController;
 
     /**
      * GameGUI Konstruktor
@@ -37,6 +34,8 @@ public class GameGUI extends JFrame
         initializeComponents();
         setupLayout();
         setupEventHandlers();
+
+        gameController = new GameController();
 
         setVisible(true);
         repaint();
@@ -138,61 +137,6 @@ public class GameGUI extends JFrame
     }
 
     /**
-     * initializeDeck()
-     *
-     * Initierar kortleken inför ett nytt spel
-     */
-    private void initializeDeck()
-    {
-        cardDeck = new Deck();
-        Collections.shuffle(cardDeck.getDeck());
-        dealerHand = new ArrayList<>();
-        playerHand = new ArrayList<>();
-        gameOver = false;
-
-        // Rensa panelen
-        dealerCardsPanel.removeAll();
-        playerCardsPanel.removeAll();
-
-        // Ge ut kort till spelaren
-        // och dealern
-        playerHand.add(drawCard());
-        dealerHand.add(drawCard());
-        playerHand.add(drawCard());
-
-        // Uppdatera display
-        updateDisplay();
-
-        // Stäng av eller sätt igång knapparna
-        hitButton.setEnabled(true);
-        standButton.setEnabled(true);
-        newGameButton.setEnabled(false);
-
-        // Kolla efter blackjack
-        if (calculateHandValue(playerHand) == 21)
-        {
-            playerStands();
-        }
-    }
-
-    /**
-     * drawCard()
-     *
-     * Drar ett nytt kort
-     *
-     * @return det nya kortet
-     */
-    private Card drawCard()
-    {
-        // Är kort decken tom?
-        if (cardDeck.isEmpty())
-        {
-            initializeDeck();
-        }
-        return cardDeck.remove(0);
-    }
-
-    /**
      * updateDisplay()
      *
      * Uppdaterar fälten för korten samt textdisplayen
@@ -201,22 +145,22 @@ public class GameGUI extends JFrame
     {
         // Uppdatera dealer panelen
         dealerCardsPanel.removeAll();
-        for (int i = 0; i < dealerHand.size(); i++)
+        for (int i = 0; i < gameController.getAmountDealerCards(); i++)
         {
-            Card card = dealerHand.get(i);
-            dealerCardsPanel.add(new CardPrinter(card));
+            Card card = gameController.getDealerCard(i);
+            dealerCardsPanel.add(new CardPanel(card));
         }
 
         // Uppdatera spelarens panel
         playerCardsPanel.removeAll();
-        for (Card card : playerHand)
+        for (Card card : gameController.getPlayerHand())
         {
-            playerCardsPanel.add(new CardPrinter(card));
+            playerCardsPanel.add(new CardPanel(card));
         }
 
         // Uppdatera poängen
-        int dealerValue = calculateHandValue(dealerHand);
-        int playerValue = calculateHandValue(playerHand);
+        int dealerValue = gameController.calculateDealerHandsValue();
+        int playerValue = gameController.calculatePlayerHandsValue();
 
         dealerLabel.setText("Dealer: " + dealerValue );
         playerLabel.setText("Spelare: " + playerValue);
@@ -229,51 +173,6 @@ public class GameGUI extends JFrame
     }
 
     /**
-     * calculateHandValue()
-     *
-     * Beräknar kortvärden som finns i varje hand
-     *
-     * @param hand den listan på korten som handen har
-     * @return poängen
-     */
-    private int calculateHandValue(List<Card> hand)
-    {
-        int score = 0;
-        int aces = 0;
-
-        for (Card c : hand)
-        {
-            if (c.getCardValue() == 1)
-            {
-                aces++;
-                score += 11;
-            }
-            else
-                score += c.getCardValue();
-        }
-
-        // Handle aces
-        while (score > 21 && aces > 0)
-        {
-            score -= 10;
-            aces--;
-        }
-
-        return score;
-    }
-
-    /**
-     * getCardValue()
-     *
-     * @param card korten vi vill ta fram värdet
-     * @return värdet från det kortet
-     */
-    private int getCardValue(Card card)
-    {
-        return card.cardValue;
-    }
-
-    /**
      * determineWinner()
      *
      * Räkna ut vem som vann spelet
@@ -281,8 +180,8 @@ public class GameGUI extends JFrame
      */
     private void determineWinner()
     {
-        int playerValue = calculateHandValue(playerHand);
-        int dealerValue = calculateHandValue(dealerHand);
+        int playerValue = gameController.calculatePlayerHandsValue();
+        int dealerValue = gameController.calculateDealerHandsValue();
 
         if (playerValue > 21)
         {
@@ -315,7 +214,6 @@ public class GameGUI extends JFrame
      */
     private void endGame(boolean playerWon)
     {
-        gameOver = true;
         hitButton.setEnabled(false);
         standButton.setEnabled(false);
         newGameButton.setEnabled(true);
@@ -328,8 +226,28 @@ public class GameGUI extends JFrame
      */
     private void startNewGame()
     {
-        // Initialize deck and hands
-        initializeDeck();
+        gameController.initializeDeck();
+
+        // Rensa panelen
+        dealerCardsPanel.removeAll();
+        playerCardsPanel.removeAll();
+
+        gameController.addPlayerCard();
+        gameController.addDealerCard();
+        gameController.addPlayerCard();
+
+        updateDisplay();
+
+        // Stäng av eller sätt igång knapparna
+        hitButton.setEnabled(true);
+        standButton.setEnabled(true);
+        newGameButton.setEnabled(false);
+
+        // Kolla efter blackjack
+        if (gameController.calculatePlayerHandsValue() == 21)
+        {
+            playerStands();
+        }
     }
 
     /**
@@ -339,12 +257,12 @@ public class GameGUI extends JFrame
      */
     private void playerHits()
     {
-        if (!gameOver)
+        if (!gameController.isGameOver())
         {
-            playerHand.add(drawCard());
+            gameController.addPlayerCard();
             updateDisplay();
 
-            int playerValue = calculateHandValue(playerHand);
+            int playerValue = gameController.calculatePlayerHandsValue();
             if (playerValue > 21)
             {
                 statusLabel.setText("Du förlorade! Du fick " + playerValue);
@@ -360,18 +278,14 @@ public class GameGUI extends JFrame
      */
     private void playerStands()
     {
-        if (!gameOver)
+        if (!gameController.isGameOver())
         {
-            gameOver = true;
-            hitButton.setEnabled(false);
-            standButton.setEnabled(false);
-            newGameButton.setEnabled(true);
+            gameController.endGame();
+            endGame(false);
 
             // Dealer draws cards
-            while (calculateHandValue(dealerHand) < 17)
-            {
-                dealerHand.add(drawCard());
-            }
+            while (gameController.calculateDealerHandsValue() < 17)
+                gameController.addDealerCard();
 
             updateDisplay();
             determineWinner();
