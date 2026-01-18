@@ -2,10 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Klassen Deck som innehåller lista
- * på alla kortvärden
- */
+
 public class Deck
 {
     private List<Card> deck = new ArrayList<>();
