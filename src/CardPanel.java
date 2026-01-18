@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 
-
+/**
+ * Våran CardPrinter
+ * Som ritar ut korten
+ */
 public class CardPanel extends JPanel
 {
     JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -13,7 +16,11 @@ public class CardPanel extends JPanel
 
     Color color;
 
-
+    /**
+     * CardPrinter konstrueraren
+     *
+     * @param c är det kort vi vill skapa fram
+     */
     public CardPanel(Card c)
     {
         if (c.getCardSuit().equals(Suit.HEARTS) || c.getCardSuit().equals(Suit.DIAMONDS))

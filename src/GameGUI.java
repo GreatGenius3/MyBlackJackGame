@@ -1,8 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-
-public class GameGUI extends JFrame {
+/**
+ * GameGUI klassen
+ */
+public class GameGUI extends JFrame
+{
     private JButton hitButton;
     private JButton standButton;
     private JButton newGameButton;
@@ -14,8 +20,11 @@ public class GameGUI extends JFrame {
 
     GameController gameController;
 
-
-    public GameGUI() {
+    /**
+     * GameGUI Konstruktor
+     */
+    public GameGUI()
+    {
         setLayout(new BorderLayout());
         setTitle("BlackJack");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,7 +41,14 @@ public class GameGUI extends JFrame {
         repaint();
     }
 
-    private void initializeComponents() {
+    /**
+     * initializeComponents()
+     *
+     * Initierar alla komponenter i programmet
+     *
+     */
+    private void initializeComponents()
+    {
 
         dealerLabel = new JLabel("Dealer: 0", JLabel.CENTER);
         playerLabel = new JLabel("Spelare: 0", JLabel.CENTER);
@@ -48,11 +64,19 @@ public class GameGUI extends JFrame {
         standButton = new JButton("Stanna");
         newGameButton = new JButton("Nytt spel");
 
+        // Stäng av knapparna
         hitButton.setEnabled(false);
         standButton.setEnabled(false);
     }
 
-    private void setupLayout() {
+    /**
+     * setupLayout()
+     *
+     * Förbereder alla layouten i vårat program
+     */
+    private void setupLayout()
+    {
+        // Dealer panelen
         JPanel dealerPanel = new JPanel();
         dealerPanel.add(dealerLabel, BorderLayout.NORTH);
         dealerPanel.add(dealerCardsPanel, BorderLayout.CENTER);
@@ -62,6 +86,7 @@ public class GameGUI extends JFrame {
         dealerPanel.setBackground(new Color(184, 219, 128));
         dealerPanel.setPreferredSize(new Dimension(600, 400));
 
+        // Spelar Panelen
         JPanel playerPanel = new JPanel();
         playerPanel.add(playerLabel, BorderLayout.NORTH);
         playerPanel.add(playerCardsPanel, BorderLayout.CENTER);
@@ -71,88 +96,139 @@ public class GameGUI extends JFrame {
         playerPanel.setBackground(new Color(184, 219, 128));
         playerPanel.setPreferredSize(new Dimension(600, 300));
 
+        // Panel med knappar
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(hitButton);
         buttonPanel.add(standButton);
         buttonPanel.add(newGameButton);
 
+        // Status panelen
         JPanel statusPanel = new JPanel(new BorderLayout());
         statusPanel.add(statusLabel, BorderLayout.CENTER);
 
+        // Lägg till alla paneler
         add(dealerPanel, BorderLayout.NORTH);
         add(playerPanel, BorderLayout.CENTER);
 
+        // Skapa en container
         JPanel bottomContainer = new JPanel(new BorderLayout());
         bottomContainer.add(buttonPanel, BorderLayout.CENTER);
         bottomContainer.add(statusPanel, BorderLayout.SOUTH);
 
+        // Lägg till kontainer
         add(bottomContainer, BorderLayout.SOUTH);
 
+        // Försäkra om att knapparna är synliga
         hitButton.setVisible(true);
         standButton.setVisible(true);
         newGameButton.setVisible(true);
     }
 
-    private void setupEventHandlers() {
+    /**
+     * setupEventHandlers()
+     *
+     * Gör iordning knapparna så dem kopplas till funktioner
+     */
+    private void setupEventHandlers()
+    {
         hitButton.addActionListener(e -> playerHits());
         standButton.addActionListener(e -> playerStands());
         newGameButton.addActionListener(e -> startNewGame());
     }
 
-    private void updateDisplay() {
+    /**
+     * updateDisplay()
+     *
+     * Uppdaterar fälten för korten samt textdisplayen
+     */
+    private void updateDisplay()
+    {
+        // Uppdatera dealer panelen
         dealerCardsPanel.removeAll();
-        for (int i = 0; i < gameController.getAmountDealerCards(); i++) {
+        for (int i = 0; i < gameController.getAmountDealerCards(); i++)
+        {
             Card card = gameController.getDealerCard(i);
-            dealerCardsPanel.add(CardFactory.create(card));
-        }
-        if (gameController.getAmountDealerCards() == 1) {
-            dealerCardsPanel.add(CardFactory.create());
+            dealerCardsPanel.add(new CardPanel(card));
         }
 
+        // Uppdatera spelarens panel
         playerCardsPanel.removeAll();
-        for (Card card : gameController.getPlayerHand()) {
-            playerCardsPanel.add(CardFactory.create(card));
+        for (Card card : gameController.getPlayerHand())
+        {
+            playerCardsPanel.add(new CardPanel(card));
         }
 
+        // Uppdatera poängen
         int dealerValue = gameController.calculateDealerHandsValue();
         int playerValue = gameController.calculatePlayerHandsValue();
 
-        dealerLabel.setText("Dealer: " + dealerValue);
+        dealerLabel.setText("Dealer: " + dealerValue );
         playerLabel.setText("Spelare: " + playerValue);
 
+        // Måla om UI:n
         dealerCardsPanel.revalidate();
         dealerCardsPanel.repaint();
         playerCardsPanel.revalidate();
         playerCardsPanel.repaint();
     }
 
-    private void determineWinner() {
+    /**
+     * determineWinner()
+     *
+     * Räkna ut vem som vann spelet
+     *
+     */
+    private void determineWinner()
+    {
         int playerValue = gameController.calculatePlayerHandsValue();
         int dealerValue = gameController.calculateDealerHandsValue();
 
-        if (playerValue > 21) {
+        if (playerValue > 21)
+        {
             statusLabel.setText("Du förlorade! Du fick " + playerValue);
-        } else if (dealerValue > 21) {
+        }
+        else if (dealerValue > 21)
+        {
             statusLabel.setText("Grattis! Du vann! Banken fick " + dealerValue);
-        } else if (playerValue > dealerValue) {
+        }
+        else if (playerValue > dealerValue)
+        {
             statusLabel.setText("Grattis! Du vann! " + playerValue + " mot " + dealerValue);
-        } else if (playerValue < dealerValue) {
+        }
+        else if (playerValue < dealerValue)
+        {
             statusLabel.setText("Du förlorade! " + playerValue + " mot " + dealerValue);
-        } else {
+        }
+        else
+        {
             statusLabel.setText("Oavgjort! " + playerValue + " lika med " + dealerValue);
         }
     }
 
-
-    private void endGame(boolean playerWon) {
+    /**
+     * endGame()
+     *
+     * Avlusta denna runda och tal även om vem som vann
+     *
+     * @param playerWon Vann spelaren?
+     */
+    private void endGame(boolean playerWon)
+    {
         hitButton.setEnabled(false);
         standButton.setEnabled(false);
         newGameButton.setEnabled(true);
     }
 
-    private void startNewGame() {
+    /**
+     * startNewGame()
+     *
+     * Starta nytt spel
+     */
+    private void startNewGame()
+    {
         gameController.initializeDeck();
 
+        // Rensa panelen
         dealerCardsPanel.removeAll();
         playerCardsPanel.removeAll();
 
@@ -162,34 +238,54 @@ public class GameGUI extends JFrame {
 
         updateDisplay();
 
+        // Stäng av eller sätt igång knapparna
         hitButton.setEnabled(true);
         standButton.setEnabled(true);
         newGameButton.setEnabled(false);
 
-        if (gameController.calculatePlayerHandsValue() == 21) {
+        // Kolla efter blackjack
+        if (gameController.calculatePlayerHandsValue() == 21)
+        {
             playerStands();
         }
     }
 
-    private void playerHits() {
-        if (!gameController.isGameOver()) {
+    /**
+     * playerHits()
+     *
+     * Spelaren trycker på ta nytt kort knappen
+     */
+    private void playerHits()
+    {
+        if (!gameController.isGameOver())
+        {
             gameController.addPlayerCard();
             updateDisplay();
 
             int playerValue = gameController.calculatePlayerHandsValue();
-            if (playerValue > 21) {
+            if (playerValue > 21)
+            {
                 statusLabel.setText("Du förlorade! Du fick " + playerValue);
                 endGame(false);
             }
         }
     }
 
-    private void playerStands() {
-        if (!gameController.isGameOver()) {
+    /**
+     * playerStands()
+     *
+     * Spelaren väljer att stanna
+     */
+    private void playerStands()
+    {
+        if (!gameController.isGameOver())
+        {
             gameController.endGame();
             endGame(false);
 
-            while (gameController.calculateDealerHandsValue() < 17) gameController.addDealerCard();
+            // Dealer draws cards
+            while (gameController.calculateDealerHandsValue() < 17)
+                gameController.addDealerCard();
 
             updateDisplay();
             determineWinner();
