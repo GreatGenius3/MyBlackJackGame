@@ -3,78 +3,73 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class GameController
-{
+public class GameController {
     Deck cardDeck;
     private List<Card> dealerHand;
     private List<Card> playerHand;
     private boolean gameOver;
 
-    public GameController()
-    {
+    public GameController() {
 
     }
 
-    Deck getCardDeck() { return  cardDeck; }
-    List<Card> getDealerHand() {return dealerHand;}
-    List<Card> getPlayerHand() {return playerHand;}
-    boolean isGameOver() { return gameOver;}
-    public int getCardValue(Card card)
-    {
+    Deck getCardDeck() {
+        return cardDeck;
+    }
+
+    List<Card> getDealerHand() {
+        return dealerHand;
+    }
+
+    List<Card> getPlayerHand() {
+        return playerHand;
+    }
+
+    boolean isGameOver() {
+        return gameOver;
+    }
+
+    public int getCardValue(Card card) {
         return card.cardValue;
     }
 
-    public Card addPlayerCard()
-    {
-        Card addCard = cardDeck.remove(0);
-        playerHand.add(addCard);
-        return addCard;
+    public void addPlayerCard() {
+        playerHand.add(drawCard());
     }
 
-    public Card addDealerCard()
-    {
-        Card addCard = cardDeck.remove(0);
+    public void addDealerCard() {
         dealerHand.add(drawCard());
-        return addCard;
     }
 
-    public Card getPlayerCard(int index)
-    {
+    public Card getPlayerCard(int index) {
         return getPlayerHand().get(index);
     }
 
-    public Card getDealerCard(int index)
-    {
+    public Card getDealerCard(int index) {
         return getDealerHand().get(index);
     }
 
-    public int getAmountPlayerCards()
-    {
+    public int getAmountPlayerCards() {
         return playerHand.size();
     }
 
-    public int getAmountDealerCards()
-    {
+    public int getAmountDealerCards() {
         return dealerHand.size();
     }
 
-    public int calculatePlayerHandsValue()
-    {
+    public int calculatePlayerHandsValue() {
         return calculateHandValue(playerHand);
     }
 
-    public int calculateDealerHandsValue()
-    {
+    public int calculateDealerHandsValue() {
         return calculateHandValue(dealerHand);
     }
 
-    public void startNewGame()
-    {
+    public void startNewGame() {
         initializeDeck();
     }
 
-    public void initializeDeck()
-    {
+    public void initializeDeck() {
         cardDeck = new Deck();
         Collections.shuffle(cardDeck.getDeck());
         dealerHand = new ArrayList<>();
@@ -82,34 +77,25 @@ public class GameController
         gameOver = false;
     }
 
-    public Card drawCard()
-    {
-        if (cardDeck.isEmpty())
-        {
+    public Card drawCard() {
+        if (cardDeck.isEmpty()) {
             initializeDeck();
         }
         return cardDeck.remove(0);
     }
 
-    public int calculateHandValue(List<Card> hand)
-    {
+    public int calculateHandValue(List<Card> hand) {
         int score = 0;
         int aces = 0;
 
-        for (Card c : hand)
-        {
-            if (c.getCardValue() == 1)
-            {
+        for (Card c : hand) {
+            if (c.getCardValue() == 1) {
                 aces++;
                 score += 11;
-            }
-            else
-                score += c.getCardValue();
+            } else score += c.getCardValue();
         }
 
-        // Handle aces
-        while (score > 21 && aces > 0)
-        {
+        while (score > 21 && aces > 0) {
             score -= 10;
             aces--;
         }
@@ -117,8 +103,7 @@ public class GameController
         return score;
     }
 
-    public void endGame()
-    {
+    public void endGame() {
         gameOver = true;
     }
 }

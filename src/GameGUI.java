@@ -104,8 +104,9 @@ public class GameGUI extends JFrame {
         dealerCardsPanel.removeAll();
         for (int i = 0; i < gameController.getAmountDealerCards(); i++) {
             Card card = gameController.getDealerCard(i);
-            dealerCardsPanel.add(new CardPanel(card));
+            dealerCardsPanel.add(CardFactory.create(card));
         }
+        dealerCardsPanel.add(CardFactory.create());
 
         playerCardsPanel.removeAll();
         for (Card card : gameController.getPlayerHand()) {
