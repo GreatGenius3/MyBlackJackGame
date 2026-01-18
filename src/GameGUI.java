@@ -1,7 +1,6 @@
-package Interface;
-
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collections;
 
 
 public class GameGUI extends JFrame {

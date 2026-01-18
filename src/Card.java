@@ -3,6 +3,7 @@
  */
 public class Card
 {
+    boolean faceDown = false;
     int cardValue;
     Suit cardSuit;
     String cardName;
