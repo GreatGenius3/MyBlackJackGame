@@ -1,3 +1,5 @@
+import Interface.GameGUI;
+
 /**
  * Huvudprogrammet
  */
