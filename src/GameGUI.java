@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collections;
 
 
 public class GameGUI extends JFrame {
@@ -106,13 +105,14 @@ public class GameGUI extends JFrame {
             Card card = gameController.getDealerCard(i);
             dealerCardsPanel.add(CardFactory.create(card));
         }
-        dealerCardsPanel.add(CardFactory.create());
+        if (gameController.getAmountDealerCards() == 1) {
+            dealerCardsPanel.add(CardFactory.create());
+        }
 
         playerCardsPanel.removeAll();
         for (Card card : gameController.getPlayerHand()) {
             playerCardsPanel.add(CardFactory.create(card));
         }
-
 
         int dealerValue = gameController.calculateDealerHandsValue();
         int playerValue = gameController.calculatePlayerHandsValue();

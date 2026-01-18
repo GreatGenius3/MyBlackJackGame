@@ -13,6 +13,7 @@ public class GameController {
 
     }
 
+
     Deck getCardDeck() {
         return cardDeck;
     }
@@ -39,6 +40,7 @@ public class GameController {
 
     public void addDealerCard() {
         dealerHand.add(drawCard());
+
     }
 
     public Card getPlayerCard(int index) {

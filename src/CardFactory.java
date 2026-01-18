@@ -6,7 +6,6 @@ public class CardFactory {
     }
 
     public static JComponent create() {
-        return new CardBackImage(new ImageIcon("Images/cardback1.png"));
-
+        return new CardBackImage(new ImageIcon("src/Images/cardback1.png"));
     }
 }
