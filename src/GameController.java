@@ -84,7 +84,6 @@ public class GameController
 
     public Card drawCard()
     {
-        // Är kort decken tom?
         if (cardDeck.isEmpty())
         {
             initializeDeck();
