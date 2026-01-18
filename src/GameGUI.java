@@ -110,8 +110,9 @@ public class GameGUI extends JFrame {
 
         playerCardsPanel.removeAll();
         for (Card card : gameController.getPlayerHand()) {
-            playerCardsPanel.add(new CardPanel(card));
+            playerCardsPanel.add(CardFactory.create(card));
         }
+
 
         int dealerValue = gameController.calculateDealerHandsValue();
         int playerValue = gameController.calculatePlayerHandsValue();
